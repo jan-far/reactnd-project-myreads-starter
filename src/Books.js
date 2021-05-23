@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const Books = ({ book, handleSelect }) => {
   return (
@@ -10,7 +11,9 @@ const Books = ({ book, handleSelect }) => {
             style={{
               width: 128,
               height: 193,
-              backgroundImage: `${!book.imageLinks ? 'No Image' : `url(' book.imageLinks.thumbnail')`}`,
+              backgroundImage: `${
+                !book.imageLinks ? 'No Image' : `url(${book.imageLinks.thumbnail})`
+              }`,
             }}
           />
           <div className="book-shelf-changer">
@@ -30,11 +33,18 @@ const Books = ({ book, handleSelect }) => {
         </div>
         <div className="book-title">{book.title}</div>
         <div className="book-authors">
-          {!book.authors ? 'Unavailable author info' : book.authors.map((author, i) => <div key={i}>{author}</div>)}
+          {!book.authors
+            ? 'Unavailable author info'
+            : book.authors.map((author, i) => <div key={i}>{author}</div>)}
         </div>
       </div>
     </li>
   );
+};
+
+Books.propTypes = {
+  book: PropTypes.object,
+  handleSelect: PropTypes.func,
 };
 
 export default Books;

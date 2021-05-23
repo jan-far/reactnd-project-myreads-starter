@@ -17,14 +17,16 @@ export class SearchPage extends Component {
       ? this.setState(() => ({
           queriedBooks: [],
         }))
-      : BooksAPI.search(value.trim())
+      : BooksAPI.search(value)
           .then((books) => {
             for (let i = 0; i < books.length; i++) {
               for (let val in Books) {
                 Books[val].forEach((b) => {
                   if (b.id === books[i].id) {
-                    books.splice(i, 1, b)};
-                });}
+                    books.splice(i, 1, b);
+                  }
+                });
+              }
             }
             return books;
           })
@@ -35,7 +37,25 @@ export class SearchPage extends Component {
           });
 
     this.setState(() => ({
-      query: value.trim(),
+      query: value,
+    }));
+  };
+
+  handleSelectUpdate = (e, book) => {
+    this.props.handleSelect(e, book);
+
+    let { queriedBooks } = this.state;
+    const shelf = e.target.value;
+
+    const updatedQuery = queriedBooks.map((qBook) => {
+      if (qBook.id === book.id) {
+        return { ...qBook, shelf: shelf };
+      }
+      return qBook;
+    });
+
+    this.setState(() => ({
+      queriedBooks: updatedQuery,
     }));
   };
 
@@ -47,8 +67,6 @@ export class SearchPage extends Component {
         : queriedBooks.error
         ? `No result found for '${query}'`
         : queriedBooks;
-
-    const { handleSelect } = this.props;
 
     return (
       <div className="search-books">
@@ -81,7 +99,7 @@ export class SearchPage extends Component {
               <div>loading...</div>
             ) : (
               querySearch.map((book) => (
-                <Books key={book.id} book={book} handleSelect={handleSelect} />
+                <Books key={book.id} book={book} handleSelect={this.handleSelectUpdate} />
               ))
             )}
           </ol>

@@ -4,7 +4,6 @@ import './App.css';
 import MyReads from './MyReads';
 import SearchPage from './SearchPage';
 import { Route } from 'react-router-dom';
-import shuffleShelf from './shuffleShelf';
 
 class BooksApp extends React.Component {
   state = {
@@ -16,13 +15,33 @@ class BooksApp extends React.Component {
     },
   };
 
+  shuffleShelf = (book) => {
+    const shelf = this.state.books;
+
+    switch (book.shelf) {
+      case 'currentlyReading':
+        shelf['currentlyReading'] = shelf.currentlyReading.concat([book]);
+        break;
+      case 'wantToRead':
+        shelf['wantToRead'] = shelf.wantToRead.concat([book]);
+        break;
+      case 'read':
+        shelf['read'] = shelf.read.concat([book]);
+        break;
+      default:
+        break;
+    }
+
+    return shelf;
+  };
+
   componentDidMount() {
     let shelf;
     BooksAPI.getAll()
       .then((result) => result)
       .then((bookShelf) => {
         bookShelf.map((book) => {
-          return (shelf = shuffleShelf(book));
+          return (shelf = this.shuffleShelf(book));
         });
         return shelf;
       })
@@ -48,13 +67,13 @@ class BooksApp extends React.Component {
           }));
       })
       .then(() => {
-        book = {...book, shelf: value}
+        book = { ...book, shelf: value };
         value !== 'none' &&
-        this.setState((prevState) => ({
-          books: { ...prevState.books, [value]: [...prevState.books[value], book] },
-        }));
-        return book
-      })
+          this.setState((prevState) => ({
+            books: { ...prevState.books, [value]: [...prevState.books[value], book] },
+          }));
+        return book;
+      });
   };
 
   render() {
@@ -77,7 +96,7 @@ class BooksApp extends React.Component {
           )}
         />
         <Route path="/search">
-          <SearchPage handleSelect={this.handleSelect} Books={this.state.books}/>
+          <SearchPage handleSelect={this.handleSelect} Books={this.state.books} />
         </Route>
       </div>
     );

@@ -26,4 +26,5 @@ const MyReads = (props) => {
     </div>
   );
 };
+
 export default MyReads;
